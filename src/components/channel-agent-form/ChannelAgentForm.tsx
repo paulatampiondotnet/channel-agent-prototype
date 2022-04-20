@@ -1,11 +1,14 @@
-import { Button, Card, Grid, TextField, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
+import { Button, Card, getStepContentUtilityClass, Grid, Link, TextField, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
 import { createStyles, makeStyles } from '@mui/styles'
 import classNames from 'classnames';
 import { useCallback, useState } from 'react';
 import NumberFormat, { NumberFormatValues } from 'react-number-format';
+import { setConstantValue } from 'typescript';
 import { CustomerTypeEnum } from '../../constants';
 import { InitializeEnrollment } from '../../services/enrollment';
+import { parseAddress } from '../../utils/parseAddress';
 import { ListOfLinks } from './ListOfLinks';
+import { PlacesAutocomplete } from './PlacesAutocomplete';
 
 export const useChannelAgentFormStyles: Function = makeStyles(() =>
   createStyles({
@@ -39,6 +42,11 @@ export const ChannelAgentForm = () => {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [phoneNumber, setPhoneNumber] = useState('')
+  const [streetAddress, setStreetAddress] = useState('')
+  const [city, setCity] = useState('')
+  const [state, setState] = useState('')
+  
+  const [fullAddressFormVisible, setFullAddressFormVisible] = useState(false)
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
@@ -74,6 +82,18 @@ export const ChannelAgentForm = () => {
     handlePhoneNumberChange(v.value);
   }, [handlePhoneNumberChange]);
 
+  const handleAddressSelected = (longAddress: string) => {
+    const { streetAddress, city, state } = parseAddress(longAddress);
+    setStreetAddress(streetAddress);
+    setCity(city);
+    setState(state);
+    setFullAddressFormVisible(true)
+  }
+
+  const handleManualEntryClick = useCallback(() => {
+    setFullAddressFormVisible(true)
+  }, [setFullAddressFormVisible])
+
   const handleSubmit = () => {
     InitializeEnrollment({
       email: email,
@@ -98,14 +118,14 @@ export const ChannelAgentForm = () => {
           sx={{ padding: 8}}
         >
           <Typography>Welcome, Agent Smith!</Typography>
-          <TextField id="email" label="Subscriber Email" variant="standard" autoComplete='off' value={email} onChange={handleEmailChange}/>
-          <TextField id="zip" label="Zip Code" variant="standard" autoComplete='off' value={zip} onChange={handleZipChange}/>
-          <TextField id="custom-message" label="Custom Message (Optional)" multiline maxRows={8} autoComplete='off' sx={{mt: 4, mb: 4}} value={message} onChange={handleMessageChange}/>
+          <TextField id="email" label="Subscriber Email" variant="standard" autoComplete='new-password' value={email} onChange={handleEmailChange}/>
+          <TextField id="zip" label="Zip Code" variant="standard" autoComplete='new-password' value={zip} onChange={handleZipChange}/>
+          <TextField id="custom-message" label="Custom Message (Optional)" multiline maxRows={8} autoComplete='new-password' sx={{mt: 4, mb: 4}} value={message} onChange={handleMessageChange}/>
           <Button variant='contained' sx={{width: 50}} disabled={submitDisabled} onClick={handleSubmit}>Send</Button>
         </Card>
       </Grid>
     </Grid>
-    <Grid className={classes.container} container spacing={2}>
+    {(zip?.length === 5 && email) && <Grid className={classes.container} container spacing={2}>
       <Grid item xs={12} md={12}>
           <Card className={classNames({
             [classes.flexColumn]: true,
@@ -124,8 +144,8 @@ export const ChannelAgentForm = () => {
               <ToggleButton value={CustomerTypeEnum.business}>Business</ToggleButton>
             </ToggleButtonGroup>
             <Grid sx={{ marginBottom: 4 }}>
-              <TextField id="first-name" label="First Name" variant="standard" autoComplete='off' value={firstName} onChange={handleFirstNameChange} sx={{ width: '40%', marginRight: '7px' }}/>
-              <TextField id="last-name" label="Last Name" variant="standard" autoComplete='off' value={lastName} onChange={handleLastNameChange} sx={{ width: '40%' }} />
+              <TextField id="first-name" label="First Name" variant="standard" autoComplete='new-password' value={firstName} onChange={handleFirstNameChange} sx={{ width: '40%', marginRight: 8 }}/>
+              <TextField id="last-name" label="Last Name" variant="standard" autoComplete='new-password' value={lastName} onChange={handleLastNameChange} sx={{ width: '40%' }} />
             </Grid>
             <NumberFormat
               id='phoneNumber'
@@ -137,11 +157,22 @@ export const ChannelAgentForm = () => {
               label={'Phone'}
               value={phoneNumber}
               sx={{ width: '40%' }}
+              variant='standard'
             />
-            <Typography mt={4} variant='h5'>Street Address</Typography>
+            <Typography mt={4} mb={4} variant='h5'>Street Address</Typography>
+
+            {!fullAddressFormVisible && <PlacesAutocomplete onSelect={handleAddressSelected}/>}
+            {!fullAddressFormVisible && <Link href='#' sx={{ cursor: 'pointer' }} onClick={handleManualEntryClick}>Manually Enter Address</Link>}
+
+            {fullAddressFormVisible && <TextField label={'Street Address'} value={streetAddress} />}
+            {fullAddressFormVisible && <Grid>
+              <TextField margin='normal' label={'City'} value={city} sx={{ width: '40%', marginRight: 4 }}/>
+              <TextField margin='normal' label={'State'} value={state} sx={{ width: '20%', marginRight: 4 }}/>
+              <TextField margin='normal' label={'Zip'} value={zip} sx={{ width: '20%' }}/>
+            </Grid>}
           </Card>
       </Grid>
-    </Grid>
+    </Grid>}
   </div>
 }
 
