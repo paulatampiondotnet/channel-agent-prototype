@@ -1,11 +1,13 @@
-import { Button, Card, getStepContentUtilityClass, Grid, Link, TextField, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
+import { Card, Grid, Link, TextField, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
+import SendIcon from '@mui/icons-material/Send';
+import LoadingButton from '@mui/lab/LoadingButton';
 import { createStyles, makeStyles } from '@mui/styles'
 import classNames from 'classnames';
 import { useCallback, useState } from 'react';
 import NumberFormat, { NumberFormatValues } from 'react-number-format';
-import { setConstantValue } from 'typescript';
+import { useSnackbar } from 'notistack';
 import { CustomerTypeEnum } from '../../constants';
-import { InitializeEnrollment } from '../../services/enrollment';
+import { InitializeEnrollment as initializeEnrollment } from '../../services/enrollment';
 import { parseAddress } from '../../utils/parseAddress';
 import { ListOfLinks } from './ListOfLinks';
 import { PlacesAutocomplete } from './PlacesAutocomplete';
@@ -34,6 +36,7 @@ export const useChannelAgentFormStyles: Function = makeStyles(() =>
 
 export const ChannelAgentForm = () => {
   const classes = useChannelAgentFormStyles();
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const [email, setEmail] = useState('')
   const [zip, setZip] = useState('')
@@ -45,6 +48,32 @@ export const ChannelAgentForm = () => {
   const [streetAddress, setStreetAddress] = useState('')
   const [city, setCity] = useState('')
   const [state, setState] = useState('')
+
+  const [loading, setLoading] = useState(false)
+
+  const clearForm = useCallback(() => {
+    setEmail('')
+    setZip('')
+    setMessage('')
+    setCustomerType('')
+    setFirstName('')
+    setLastName('')
+    setPhoneNumber('')
+    setStreetAddress('')
+    setCity('')
+    setState('')
+  }, [
+    setEmail,
+    setZip,
+    setMessage,
+    setCustomerType,
+    setFirstName,
+    setLastName,
+    setPhoneNumber,
+    setStreetAddress,
+    setCity,
+    setState,
+  ])
   
   const [fullAddressFormVisible, setFullAddressFormVisible] = useState(false)
 
@@ -94,15 +123,30 @@ export const ChannelAgentForm = () => {
     setFullAddressFormVisible(true)
   }, [setFullAddressFormVisible])
 
-  const handleSubmit = () => {
-    InitializeEnrollment({
+  const handleSubmit = async () => {
+    setLoading(true);
+    await initializeEnrollment({
       email: email,
       billing_zip_code: zip,
       message,
       customer_type: customerType,
       first_name: firstName,
-      last_name: lastName
+      last_name: lastName,
+      billing_address_1: streetAddress,
+      billing_address_2: '',
+      billing_city: city,
+      billing_state: state,
+      phone: phoneNumber
     })
+    enqueueSnackbar(`Invitation sent to ${email}!`, {
+      variant: 'success', 
+      anchorOrigin: {
+        vertical: 'top',
+        horizontal: 'right',
+      }
+    });
+    clearForm();
+    setLoading(false);
   }
 
   const submitDisabled = Boolean(email.length <= 0 || zip.length !== 5);
@@ -121,7 +165,16 @@ export const ChannelAgentForm = () => {
           <TextField id="email" label="Subscriber Email" variant="standard" autoComplete='new-password' value={email} onChange={handleEmailChange}/>
           <TextField id="zip" label="Zip Code" variant="standard" autoComplete='new-password' value={zip} onChange={handleZipChange}/>
           <TextField id="custom-message" label="Custom Message (Optional)" multiline maxRows={8} autoComplete='new-password' sx={{mt: 4, mb: 4}} value={message} onChange={handleMessageChange}/>
-          <Button variant='contained' sx={{width: 50}} disabled={submitDisabled} onClick={handleSubmit}>Send</Button>
+          <LoadingButton
+            size="small"
+            variant='contained' 
+            loading={loading} 
+            endIcon={<SendIcon />}
+            loadingPosition="end"
+            sx={{width: 100}} 
+            disabled={submitDisabled} 
+            onClick={handleSubmit}
+          >Send</LoadingButton>
         </Card>
       </Grid>
     </Grid>
@@ -166,7 +219,7 @@ export const ChannelAgentForm = () => {
 
             {fullAddressFormVisible && <TextField label={'Street Address'} value={streetAddress} />}
             {fullAddressFormVisible && <Grid>
-              <TextField margin='normal' label={'City'} value={city} sx={{ width: '40%', marginRight: 4 }}/>
+              <TextField margin='normal' label={'City'} value={city} sx={{ width: '52%', marginRight: 4 }}/>
               <TextField margin='normal' label={'State'} value={state} sx={{ width: '20%', marginRight: 4 }}/>
               <TextField margin='normal' label={'Zip'} value={zip} sx={{ width: '20%' }}/>
             </Grid>}
@@ -174,5 +227,5 @@ export const ChannelAgentForm = () => {
       </Grid>
     </Grid>}
   </div>
-}
+};
 

@@ -14,7 +14,10 @@ export const PlacesAutocomplete = ({ onSelect }: { onSelect: (description: strin
     clearSuggestions,
   } = usePlacesAutocomplete({
     requestOptions: {
-      /* Define search scope here */
+      types: ['address'],
+      componentRestrictions: {
+        country: 'us'
+      }
     },
     debounce: 300,
   });
