@@ -48,6 +48,10 @@ export const ChannelAgentForm = () => {
   const [streetAddress, setStreetAddress] = useState('')
   const [city, setCity] = useState('')
   const [state, setState] = useState('')
+  const [serviceAddress, setServiceAddress] = useState('')
+  const [serviceCity, setServiceCity] = useState('')
+  const [serviceState, setServiceState] = useState('')
+  const [serviceZip, setServiceZip] = useState('')
 
   const [loading, setLoading] = useState(false)
 
@@ -62,6 +66,10 @@ export const ChannelAgentForm = () => {
     setStreetAddress('')
     setCity('')
     setState('')
+    setServiceAddress('')
+    setServiceCity('')
+    setServiceState('')
+    setServiceZip('')
   }, [
     setEmail,
     setZip,
@@ -73,6 +81,10 @@ export const ChannelAgentForm = () => {
     setStreetAddress,
     setCity,
     setState,
+    setServiceAddress,
+    setServiceCity,
+    setServiceState,
+    setServiceZip,
   ])
   
   const [fullAddressFormVisible, setFullAddressFormVisible] = useState(false)
@@ -97,6 +109,34 @@ export const ChannelAgentForm = () => {
     setLastName(event.target.value);
   };
 
+  const handleStreetAddressChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setStreetAddress(event.target.value);
+  };
+
+  const handleCityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setCity(event.target.value);
+  };
+
+  const handleStateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setState(event.target.value);
+  };
+
+  const handleServiceAddressChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setServiceAddress(event.target.value);
+  };
+
+  const handleServiceCityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setServiceCity(event.target.value);
+  };
+
+  const handleServiceStateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setServiceState(event.target.value);
+  };
+
+  const handleServiceZipChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setServiceZip(event.target.value);
+  };
+
   const handleCustomerTypeChange = (
     _: React.MouseEvent<HTMLElement>,
     newValue: string,
@@ -116,6 +156,10 @@ export const ChannelAgentForm = () => {
     setStreetAddress(streetAddress);
     setCity(city);
     setState(state);
+    setServiceAddress(streetAddress);
+    setServiceCity(city);
+    setServiceState(state);
+    setServiceZip(zip);
     setFullAddressFormVisible(true)
   }
 
@@ -126,6 +170,7 @@ export const ChannelAgentForm = () => {
   const handleSubmit = async () => {
     setLoading(true);
     await initializeEnrollment({
+      agent_name: 'Agent Smith',
       email: email,
       billing_zip_code: zip,
       message,
@@ -136,6 +181,11 @@ export const ChannelAgentForm = () => {
       billing_address_2: '',
       billing_city: city,
       billing_state: state,
+      service_address_1: serviceAddress,
+      service_address_2: '',
+      service_city: serviceCity,
+      service_state: serviceState,
+      service_zip_code: serviceZip,
       phone: phoneNumber
     })
     enqueueSnackbar(`Invitation sent to ${email}!`, {
@@ -217,11 +267,20 @@ export const ChannelAgentForm = () => {
             {!fullAddressFormVisible && <PlacesAutocomplete onSelect={handleAddressSelected}/>}
             {!fullAddressFormVisible && <Link href='#' sx={{ cursor: 'pointer' }} onClick={handleManualEntryClick}>Manually Enter Address</Link>}
 
-            {fullAddressFormVisible && <TextField label={'Street Address'} value={streetAddress} />}
+            {fullAddressFormVisible && <TextField label={'Street Address'} value={streetAddress} onChange={handleStreetAddressChange} />}
             {fullAddressFormVisible && <Grid>
-              <TextField margin='normal' label={'City'} value={city} sx={{ width: '52%', marginRight: 4 }}/>
-              <TextField margin='normal' label={'State'} value={state} sx={{ width: '20%', marginRight: 4 }}/>
-              <TextField margin='normal' label={'Zip'} value={zip} sx={{ width: '20%' }}/>
+              <TextField margin='normal' label={'City'} value={city} sx={{ width: '52%', marginRight: 4 }}  onChange={handleCityChange} />
+              <TextField margin='normal' label={'State'} value={state} sx={{ width: '20%', marginRight: 4 }} onChange={handleStateChange} />
+              {/* <TextField margin='normal' label={'Zip'} value={zip} sx={{ width: '20%' }} onChange={handleZipChange} /> */}
+            </Grid>}
+
+            {fullAddressFormVisible && <Typography mt={4} mb={4} variant='h5'>Service Address</Typography>}
+
+            {fullAddressFormVisible && <TextField label={'Street Address'} value={serviceAddress} onChange={handleServiceAddressChange} />}
+            {fullAddressFormVisible && <Grid>
+              <TextField margin='normal' label={'City'} value={serviceCity} sx={{ width: '52%', marginRight: 4 }} onChange={handleServiceCityChange} />
+              <TextField margin='normal' label={'State'} value={serviceState} sx={{ width: '20%', marginRight: 4 }} onChange={handleServiceStateChange} />
+              <TextField margin='normal' label={'Zip'} value={serviceZip} sx={{ width: '20%' }} onChange={handleServiceZipChange} />
             </Grid>}
           </Card>
       </Grid>
