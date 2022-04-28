@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import { useCallback, useState } from 'react';
 import NumberFormat, { NumberFormatValues } from 'react-number-format';
 import { useSnackbar, VariantType } from 'notistack';
-import { CANNOT_PROCEED_CODE, COMPLETE_ENROLLMENT_CODE, COMPLETE_ENROLLMENT_PENDING_PAYMENT_VERIFICATION_CODE, CustomerTypeEnum, INCOMPLETE_ENROLLMENT_CODE } from '../../constants';
+import { CANNOT_PROCEED_CODE, COMPLETE_ENROLLMENT_CODE, COMPLETE_ENROLLMENT_PENDING_PAYMENT_VERIFICATION_CODE, CustomerTypeEnum, EMAIL_REGEX, INCOMPLETE_ENROLLMENT_CODE } from '../../constants';
 import { InitializeEnrollment as initializeEnrollment } from '../../services/enrollment';
 import { parseAddress } from '../../utils/parseAddress';
 import { ListOfLinks } from './ListOfLinks';
@@ -30,6 +30,13 @@ export const useChannelAgentFormStyles: Function = makeStyles(() =>
     height100: {
       height: '100%',
       boxSizing: 'border-box'
+    },
+    autocompleteListItem: {
+      cursor: 'pointer',
+      '&:hover': {
+        backgroundColor: 'black',
+        color: 'whitesmoke'
+      }
     }
   }),
 );
@@ -89,9 +96,16 @@ export const ChannelAgentForm = () => {
   ])
   
   const [fullAddressFormVisible, setFullAddressFormVisible] = useState(false)
+  const [emailValidation, setEmailValidation] = useState({ error: false, helperText: '' })
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(event.target.value);
+    const emailInput = event.target.value
+    setEmail(emailInput);
+    if (!EMAIL_REGEX.test(emailInput)) {
+      setEmailValidation({ error: true, helperText: 'Not a valid email address.' })
+    } else {
+      setEmailValidation({ error: false, helperText: '' });
+    }
   };
 
   const handleZipChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -236,6 +250,16 @@ export const ChannelAgentForm = () => {
   }
 
   const submitDisabled = Boolean(email.length <= 0 || zip.length !== 5);
+  const sendButton = <LoadingButton
+    size="small"
+    variant='contained'
+    loading={loading}
+    endIcon={<SendIcon />}
+    loadingPosition="end"
+    sx={{ width: 100 }}
+    disabled={submitDisabled}
+    onClick={handleSubmit}
+  >Send</LoadingButton>;
   return <div className={classes.flexColumn}>
     <Grid className={classes.container} container spacing={2}>
       <ListOfLinks />
@@ -245,22 +269,13 @@ export const ChannelAgentForm = () => {
             [classes.spaceBetween]: true,
             [classes.whiteBg]: true
           })}
-          sx={{ padding: 8}}
+          sx={{ padding: '16px 32px 32px 32px'}}
         >
-          <Typography>Welcome, Agent Smith!</Typography>
-          <TextField id="email" label="Subscriber Email" variant="standard" autoComplete='new-password' value={email} onChange={handleEmailChange}/>
-          <TextField id="zip" label="Zip Code" variant="standard" autoComplete='new-password' value={zip} onChange={handleZipChange}/>
+          <Typography variant='h5' mb={1}>Welcome, Agent Smith!</Typography>
+          <TextField id="email" label="Subscriber Email" variant="standard" autoComplete='new-password' value={email} error={emailValidation.error} helperText={emailValidation.helperText} onChange={handleEmailChange}/>
+          <TextField id="zip" type='number' label="Zip Code" variant="standard" autoComplete='new-password' value={zip} onChange={handleZipChange}/>
           <TextField id="custom-message" label="Custom Message (Optional)" multiline maxRows={8} autoComplete='new-password' sx={{mt: 4, mb: 4}} value={message} onChange={handleMessageChange}/>
-          <LoadingButton
-            size="small"
-            variant='contained' 
-            loading={loading} 
-            endIcon={<SendIcon />}
-            loadingPosition="end"
-            sx={{width: 100}} 
-            disabled={submitDisabled} 
-            onClick={handleSubmit}
-          >Send</LoadingButton>
+          {sendButton}
         </Card>
       </Grid>
     </Grid>
@@ -282,7 +297,7 @@ export const ChannelAgentForm = () => {
               <ToggleButton value={CustomerTypeEnum.home}>Residential</ToggleButton>
               <ToggleButton value={CustomerTypeEnum.business}>Business</ToggleButton>
             </ToggleButtonGroup>
-            <Grid sx={{ marginBottom: 4 }}>
+            <Grid sx={{ marginBottom: 4, marginTop: 4 }}>
               <TextField id="first-name" label="First Name" variant="standard" autoComplete='new-password' value={firstName} onChange={handleFirstNameChange} sx={{ width: '40%', marginRight: 8 }}/>
               <TextField id="last-name" label="Last Name" variant="standard" autoComplete='new-password' value={lastName} onChange={handleLastNameChange} sx={{ width: '40%' }} />
             </Grid>
@@ -298,14 +313,14 @@ export const ChannelAgentForm = () => {
               sx={{ width: '40%' }}
               variant='standard'
             />
-            <Typography mt={4} mb={4} variant='h5'>Street Address</Typography>
+            <Typography mt={4} mb={4} variant='h5'>Billing Address</Typography>
 
             {!fullAddressFormVisible && <PlacesAutocomplete onSelect={handleAddressSelected}/>}
             {!fullAddressFormVisible && <Link href='#' sx={{ cursor: 'pointer' }} onClick={handleManualEntryClick}>Manually Enter Address</Link>}
 
             {fullAddressFormVisible && <TextField label={'Street Address'} value={streetAddress} onChange={handleStreetAddressChange} />}
             {fullAddressFormVisible && <Grid>
-              <TextField margin='normal' label={'City'} value={city} sx={{ width: '52%', marginRight: 4 }}  onChange={handleCityChange} />
+              <TextField margin='normal' label={'City'} value={city} sx={{ width: '40%', marginRight: 4 }}  onChange={handleCityChange} />
               <TextField margin='normal' label={'State'} value={state} sx={{ width: '20%', marginRight: 4 }} onChange={handleStateChange} />
               {/* <TextField margin='normal' label={'Zip'} value={zip} sx={{ width: '20%' }} onChange={handleZipChange} /> */}
             </Grid>}
@@ -313,11 +328,12 @@ export const ChannelAgentForm = () => {
             {fullAddressFormVisible && <Typography mt={4} mb={4} variant='h5'>Service Address</Typography>}
 
             {fullAddressFormVisible && <TextField label={'Street Address'} value={serviceAddress} onChange={handleServiceAddressChange} />}
-            {fullAddressFormVisible && <Grid>
-              <TextField margin='normal' label={'City'} value={serviceCity} sx={{ width: '52%', marginRight: 4 }} onChange={handleServiceCityChange} />
+            {fullAddressFormVisible && <Grid mb={1}>
+              <TextField margin='normal' label={'City'} value={serviceCity} sx={{ width: '40%', marginRight: 4 }} onChange={handleServiceCityChange} />
               <TextField margin='normal' label={'State'} value={serviceState} sx={{ width: '20%', marginRight: 4 }} onChange={handleServiceStateChange} />
-              <TextField margin='normal' label={'Zip'} value={serviceZip} sx={{ width: '20%' }} onChange={handleServiceZipChange} />
+              <TextField type='number' margin='normal' label={'Zip'} value={serviceZip} sx={{ width: '30%' }} onChange={handleServiceZipChange} />
             </Grid>}
+            {sendButton}
           </Card>
       </Grid>
     </Grid>}

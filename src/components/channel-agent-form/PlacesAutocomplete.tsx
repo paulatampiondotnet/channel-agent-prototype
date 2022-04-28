@@ -1,11 +1,10 @@
-import usePlacesAutocomplete, {
-  getGeocode,
-  getLatLng,
-} from "use-places-autocomplete";
+import usePlacesAutocomplete from "use-places-autocomplete";
 import useOnclickOutside from "react-cool-onclickoutside";
 import { List, ListItem, TextField } from "@mui/material";
+import { useChannelAgentFormStyles } from "./ChannelAgentForm";
 
 export const PlacesAutocomplete = ({ onSelect }: { onSelect: (description: string) => void }) => {
+  const classes = useChannelAgentFormStyles();
   const {
     ready,
     value,
@@ -52,7 +51,7 @@ export const PlacesAutocomplete = ({ onSelect }: { onSelect: (description: strin
       } = suggestion;
 
       return (
-        <ListItem component='li' key={place_id} onClick={handleSelect(suggestion)} sx={{ cursor: 'pointer' }}>
+        <ListItem className={classes.autocompleteListItem} component='li' key={place_id} onClick={handleSelect(suggestion)}>
           {`${main_text}, ${secondary_text}`}
         </ListItem>
       );
