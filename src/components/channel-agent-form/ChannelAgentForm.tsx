@@ -5,8 +5,8 @@ import { createStyles, makeStyles } from '@mui/styles'
 import classNames from 'classnames';
 import { useCallback, useState } from 'react';
 import NumberFormat, { NumberFormatValues } from 'react-number-format';
-import { useSnackbar } from 'notistack';
-import { CustomerTypeEnum } from '../../constants';
+import { useSnackbar, VariantType } from 'notistack';
+import { CANNOT_PROCEED_CODE, COMPLETE_ENROLLMENT_CODE, COMPLETE_ENROLLMENT_PENDING_PAYMENT_VERIFICATION_CODE, CustomerTypeEnum, INCOMPLETE_ENROLLMENT_CODE } from '../../constants';
 import { InitializeEnrollment as initializeEnrollment } from '../../services/enrollment';
 import { parseAddress } from '../../utils/parseAddress';
 import { ListOfLinks } from './ListOfLinks';
@@ -36,7 +36,8 @@ export const useChannelAgentFormStyles: Function = makeStyles(() =>
 
 export const ChannelAgentForm = () => {
   const classes = useChannelAgentFormStyles();
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const { enqueueSnackbar } = useSnackbar();
+  const vid = window.location.pathname.replace('/', '')
 
   const [email, setEmail] = useState('')
   const [zip, setZip] = useState('')
@@ -57,7 +58,7 @@ export const ChannelAgentForm = () => {
 
   const clearForm = useCallback(() => {
     setEmail('')
-    setZip('')
+    // setZip('')
     setMessage('')
     setCustomerType('')
     setFirstName('')
@@ -69,7 +70,7 @@ export const ChannelAgentForm = () => {
     setServiceAddress('')
     setServiceCity('')
     setServiceState('')
-    setServiceZip('')
+    // setServiceZip('')
   }, [
     setEmail,
     setZip,
@@ -169,33 +170,68 @@ export const ChannelAgentForm = () => {
 
   const handleSubmit = async () => {
     setLoading(true);
-    await initializeEnrollment({
-      agent_name: 'Agent Smith',
-      email: email,
-      billing_zip_code: zip,
-      message,
-      customer_type: customerType,
-      first_name: firstName,
-      last_name: lastName,
-      billing_address_1: streetAddress,
-      billing_address_2: '',
-      billing_city: city,
-      billing_state: state,
-      service_address_1: serviceAddress,
-      service_address_2: '',
-      service_city: serviceCity,
-      service_state: serviceState,
-      service_zip_code: serviceZip,
-      phone: phoneNumber
-    })
-    enqueueSnackbar(`Invitation sent to ${email}!`, {
-      variant: 'success', 
-      anchorOrigin: {
-        vertical: 'top',
-        horizontal: 'right',
+    try {
+      const fetchResult = await initializeEnrollment({
+        agent_name: 'Agent Smith',
+        email: email,
+        billing_zip_code: zip,
+        message,
+        create_new_on_conflict: true,
+        customer_type: customerType,
+        first_name: firstName,
+        last_name: lastName,
+        billing_address_1: streetAddress,
+        billing_address_2: '',
+        billing_city: city,
+        billing_state: state,
+        service_address_1: serviceAddress,
+        service_address_2: '',
+        service_city: serviceCity,
+        service_state: serviceState,
+        service_zip_code: serviceZip,
+        phone: phoneNumber,
+        vanity_id: vid
+      })
+      let messageToShow = `Invitation sent to ${email}!`
+      let variant: VariantType = 'success';
+      let autoHideDuration = 5000;
+      if (fetchResult.status === 409) {
+        variant = 'info'
+        autoHideDuration = 10000;
+        const [codedMessage] = await fetchResult.json();
+        const { code } = codedMessage;
+
+        switch (code) {
+          case CANNOT_PROCEED_CODE:
+            throw Error('Cannot proceed.')
+          case INCOMPLETE_ENROLLMENT_CODE:
+            messageToShow = `An incomplete enrollment already exists for email address ${email}.  An email has been sent to this address to resume their existing enrollment.`
+            break;
+          case COMPLETE_ENROLLMENT_CODE:
+            messageToShow = `A complete enrollment already exists for email address ${email}.  An email has been sent to this address to create a new one.`
+            break;
+          case COMPLETE_ENROLLMENT_PENDING_PAYMENT_VERIFICATION_CODE:
+            throw Error('Payment verification pending.')
+        }
       }
-    });
-    clearForm();
+      enqueueSnackbar(messageToShow, {
+        variant, 
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right',
+        },
+        autoHideDuration
+      });
+      clearForm();
+    } catch {
+      enqueueSnackbar('There was an error processing this enrollment. Please double check your data and try again or contact Ampion support.', {
+        variant: 'error', 
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right',
+        }
+      });
+    }
     setLoading(false);
   }
 
