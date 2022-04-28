@@ -1,9 +1,9 @@
-import usePlacesAutocomplete from "use-places-autocomplete";
-import useOnclickOutside from "react-cool-onclickoutside";
-import { List, ListItem, TextField } from "@mui/material";
-import { useChannelAgentFormStyles } from "./ChannelAgentForm";
+import usePlacesAutocomplete from 'use-places-autocomplete';
+import useOnclickOutside from 'react-cool-onclickoutside';
+import { List, ListItem, TextField } from '@mui/material';
+import { useChannelAgentFormStyles } from './ChannelAgentForm';
 
-export const PlacesAutocomplete = ({ onSelect }: { onSelect: (description: string) => void }) => {
+export function PlacesAutocomplete({ onSelect }: { onSelect: (description: string) => void }) {
   const classes = useChannelAgentFormStyles();
   const {
     ready,
@@ -15,8 +15,8 @@ export const PlacesAutocomplete = ({ onSelect }: { onSelect: (description: strin
     requestOptions: {
       types: ['address'],
       componentRestrictions: {
-        country: 'us'
-      }
+        country: 'us',
+      },
     },
     debounce: 300,
   });
@@ -31,19 +31,17 @@ export const PlacesAutocomplete = ({ onSelect }: { onSelect: (description: strin
     setValue(e.target.value);
   };
 
-  const handleSelect =
-    ({ description }: { description: string }) =>
-    () => {
-      // When user selects a place, we can replace the keyword without request data from API
-      // by setting the second parameter to "false"
-      setValue(description, false);
-      clearSuggestions();
+  const handleSelect = ({ description }: { description: string }) => () => {
+    // When user selects a place, we can replace the keyword without request data from API
+    // by setting the second parameter to "false"
+    setValue(description, false);
+    clearSuggestions();
 
-      onSelect(description);
-    };
+    onSelect(description);
+  };
 
   const renderSuggestions = () => {
-    console.log(data)
+    console.log(data);
     return data.map((suggestion) => {
       const {
         place_id,
@@ -51,11 +49,16 @@ export const PlacesAutocomplete = ({ onSelect }: { onSelect: (description: strin
       } = suggestion;
 
       return (
-        <ListItem className={classes.autocompleteListItem} component='li' key={place_id} onClick={handleSelect(suggestion)}>
+        <ListItem 
+          className={classes.autocompleteListItem} 
+          component="li" 
+          key={place_id} 
+          onClick={handleSelect(suggestion)}
+        >
           {`${main_text}, ${secondary_text}`}
         </ListItem>
       );
-    })
+    });
   };
 
   return (
@@ -72,7 +75,7 @@ export const PlacesAutocomplete = ({ onSelect }: { onSelect: (description: strin
         }}
       />
       {/* We can use the "status" to decide whether we should display the dropdown or not */}
-      {status === "OK" && <List>{renderSuggestions()}</List>}
+      {status === 'OK' && <List>{renderSuggestions()}</List>}
     </div>
   );
-};
+}

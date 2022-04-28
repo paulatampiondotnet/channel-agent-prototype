@@ -9,6 +9,6 @@ export function parseAddress(longAddress: string): Address {
   return {
     streetAddress: address[0],
     city: address[1],
-    state: address[2]
-  }
+    state: address[2],
+  };
 }

@@ -1,82 +1,90 @@
-import { Card, Grid, Link, TextField, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
+import {
+  Card, Grid, Link, TextField, ToggleButton, ToggleButtonGroup, Typography,
+} from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import LoadingButton from '@mui/lab/LoadingButton';
-import { createStyles, makeStyles } from '@mui/styles'
+import { createStyles, makeStyles } from '@mui/styles';
 import classNames from 'classnames';
 import { useCallback, useState } from 'react';
 import NumberFormat, { NumberFormatValues } from 'react-number-format';
 import { useSnackbar, VariantType } from 'notistack';
-import { CANNOT_PROCEED_CODE, COMPLETE_ENROLLMENT_CODE, COMPLETE_ENROLLMENT_PENDING_PAYMENT_VERIFICATION_CODE, CustomerTypeEnum, EMAIL_REGEX, INCOMPLETE_ENROLLMENT_CODE } from '../../constants';
+import {
+  CANNOT_PROCEED_CODE,
+  COMPLETE_ENROLLMENT_CODE, 
+  COMPLETE_ENROLLMENT_PENDING_PAYMENT_VERIFICATION_CODE, 
+  CustomerTypeEnum, 
+  EMAIL_REGEX, 
+  ENROLLMENT_ERROR_MESSAGE, 
+  INCOMPLETE_ENROLLMENT_CODE,
+} from '../../constants';
 import { InitializeEnrollment as initializeEnrollment } from '../../services/enrollment';
 import { parseAddress } from '../../utils/parseAddress';
 import { ListOfLinks } from './ListOfLinks';
 import { PlacesAutocomplete } from './PlacesAutocomplete';
 
-export const useChannelAgentFormStyles: Function = makeStyles(() =>
-  createStyles({
-    container: {
-      paddingTop: 32
+export const useChannelAgentFormStyles = makeStyles(() => createStyles({
+  container: {
+    paddingTop: 32,
+  },
+  flexColumn: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  spaceBetween: {
+    justifyContent: 'space-between',
+  },
+  whiteBg: {
+    backgroundColor: 'white',
+  },
+  height100: {
+    height: '100%',
+    boxSizing: 'border-box',
+  },
+  autocompleteListItem: {
+    cursor: 'pointer',
+    '&:hover': {
+      backgroundColor: 'black',
+      color: 'whitesmoke',
     },
-    flexColumn: {
-      display: 'flex',
-      flexDirection: 'column',
-    },
-    spaceBetween: {
-      justifyContent: 'space-between',
-    },
-    whiteBg: {
-      backgroundColor: 'white'
-    },
-    height100: {
-      height: '100%',
-      boxSizing: 'border-box'
-    },
-    autocompleteListItem: {
-      cursor: 'pointer',
-      '&:hover': {
-        backgroundColor: 'black',
-        color: 'whitesmoke'
-      }
-    }
-  }),
-);
+  },
+}));
 
-export const ChannelAgentForm = () => {
+export function ChannelAgentForm() {
   const classes = useChannelAgentFormStyles();
   const { enqueueSnackbar } = useSnackbar();
-  const vid = window.location.pathname.replace('/', '')
+  const vid = window.location.pathname.replace('/', '');
 
-  const [email, setEmail] = useState('')
-  const [zip, setZip] = useState('')
-  const [message, setMessage] = useState('')
-  const [customerType, setCustomerType] = useState('')
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
-  const [phoneNumber, setPhoneNumber] = useState('')
-  const [streetAddress, setStreetAddress] = useState('')
-  const [city, setCity] = useState('')
-  const [state, setState] = useState('')
-  const [serviceAddress, setServiceAddress] = useState('')
-  const [serviceCity, setServiceCity] = useState('')
-  const [serviceState, setServiceState] = useState('')
-  const [serviceZip, setServiceZip] = useState('')
+  const [email, setEmail] = useState('');
+  const [zip, setZip] = useState('');
+  const [message, setMessage] = useState('');
+  const [customerType, setCustomerType] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [streetAddress, setStreetAddress] = useState('');
+  const [city, setCity] = useState('');
+  const [state, setState] = useState('');
+  const [serviceAddress, setServiceAddress] = useState('');
+  const [serviceCity, setServiceCity] = useState('');
+  const [serviceState, setServiceState] = useState('');
+  const [serviceZip, setServiceZip] = useState('');
 
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   const clearForm = useCallback(() => {
-    setEmail('')
+    setEmail('');
     // setZip('')
-    setMessage('')
-    setCustomerType('')
-    setFirstName('')
-    setLastName('')
-    setPhoneNumber('')
-    setStreetAddress('')
-    setCity('')
-    setState('')
-    setServiceAddress('')
-    setServiceCity('')
-    setServiceState('')
+    setMessage('');
+    setCustomerType('');
+    setFirstName('');
+    setLastName('');
+    setPhoneNumber('');
+    setStreetAddress('');
+    setCity('');
+    setState('');
+    setServiceAddress('');
+    setServiceCity('');
+    setServiceState('');
     // setServiceZip('')
   }, [
     setEmail,
@@ -93,16 +101,16 @@ export const ChannelAgentForm = () => {
     setServiceCity,
     setServiceState,
     setServiceZip,
-  ])
-  
-  const [fullAddressFormVisible, setFullAddressFormVisible] = useState(false)
-  const [emailValidation, setEmailValidation] = useState({ error: false, helperText: '' })
+  ]);
+
+  const [fullAddressFormVisible, setFullAddressFormVisible] = useState(false);
+  const [emailValidation, setEmailValidation] = useState({ error: false, helperText: '' });
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const emailInput = event.target.value
+    const emailInput = event.target.value;
     setEmail(emailInput);
     if (!EMAIL_REGEX.test(emailInput)) {
-      setEmailValidation({ error: true, helperText: 'Not a valid email address.' })
+      setEmailValidation({ error: true, helperText: 'Not a valid email address.' });
     } else {
       setEmailValidation({ error: false, helperText: '' });
     }
@@ -161,7 +169,7 @@ export const ChannelAgentForm = () => {
 
   const handlePhoneNumberChange = (value: string) => {
     setPhoneNumber(value);
-  }
+  };
   const phoneNumberValueChangeHandler = useCallback((v: NumberFormatValues): void => {
     handlePhoneNumberChange(v.value);
   }, [handlePhoneNumberChange]);
@@ -175,19 +183,19 @@ export const ChannelAgentForm = () => {
     setServiceCity(city);
     setServiceState(state);
     setServiceZip(zip);
-    setFullAddressFormVisible(true)
-  }
+    setFullAddressFormVisible(true);
+  };
 
   const handleManualEntryClick = useCallback(() => {
-    setFullAddressFormVisible(true)
-  }, [setFullAddressFormVisible])
+    setFullAddressFormVisible(true);
+  }, [setFullAddressFormVisible]);
 
   const handleSubmit = async () => {
     setLoading(true);
     try {
       const fetchResult = await initializeEnrollment({
         agent_name: 'Agent Smith',
-        email: email,
+        email,
         billing_zip_code: zip,
         message,
         create_new_on_conflict: true,
@@ -204,139 +212,242 @@ export const ChannelAgentForm = () => {
         service_state: serviceState,
         service_zip_code: serviceZip,
         phone: phoneNumber,
-        vanity_id: vid
-      })
-      let messageToShow = `Invitation sent to ${email}!`
+        vanity_id: vid,
+      });
+      let messageToShow = `Invitation sent to ${email}!`;
       let variant: VariantType = 'success';
       let autoHideDuration = 5000;
       if (fetchResult.status === 409) {
-        variant = 'info'
+        variant = 'info';
         autoHideDuration = 10000;
         const [codedMessage] = await fetchResult.json();
         const { code } = codedMessage;
 
         switch (code) {
-          case CANNOT_PROCEED_CODE:
-            throw Error('Cannot proceed.')
-          case INCOMPLETE_ENROLLMENT_CODE:
-            messageToShow = `An incomplete enrollment already exists for email address ${email}.  An email has been sent to this address to resume their existing enrollment.`
-            break;
-          case COMPLETE_ENROLLMENT_CODE:
-            messageToShow = `A complete enrollment already exists for email address ${email}.  An email has been sent to this address to create a new one.`
-            break;
-          case COMPLETE_ENROLLMENT_PENDING_PAYMENT_VERIFICATION_CODE:
-            throw Error('Payment verification pending.')
+        case CANNOT_PROCEED_CODE:
+          throw Error('Cannot proceed.');
+        case INCOMPLETE_ENROLLMENT_CODE:
+          messageToShow = `An incomplete enrollment already exists for email address ${email}.  An email has been sent
+           to this address to resume their existing enrollment.`;
+          break;
+        case COMPLETE_ENROLLMENT_CODE:
+          messageToShow = `A complete enrollment already exists for email address ${email}.  An email has been sent to
+           this address to create a new one.`;
+          break;
+        case COMPLETE_ENROLLMENT_PENDING_PAYMENT_VERIFICATION_CODE:
+          throw Error('Payment verification pending.');
         }
       }
       enqueueSnackbar(messageToShow, {
-        variant, 
+        variant,
         anchorOrigin: {
           vertical: 'top',
           horizontal: 'right',
         },
-        autoHideDuration
+        autoHideDuration,
       });
       clearForm();
     } catch {
-      enqueueSnackbar('There was an error processing this enrollment. Please double check your data and try again or contact Ampion support.', {
-        variant: 'error', 
-        anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'right',
-        }
-      });
+      enqueueSnackbar(ENROLLMENT_ERROR_MESSAGE, 
+        {
+          variant: 'error',
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+        });
     }
     setLoading(false);
-  }
+  };
 
   const submitDisabled = Boolean(email.length <= 0 || zip.length !== 5);
-  const sendButton = <LoadingButton
-    size="small"
-    variant='contained'
-    loading={loading}
-    endIcon={<SendIcon />}
-    loadingPosition="end"
-    sx={{ width: 100 }}
-    disabled={submitDisabled}
-    onClick={handleSubmit}
-  >Send</LoadingButton>;
-  return <div className={classes.flexColumn}>
-    <Grid className={classes.container} container spacing={2}>
-      <ListOfLinks />
-      <Grid item xs={12} md={8}>
-        <Card className={classNames({
-            [classes.flexColumn]: true,
-            [classes.spaceBetween]: true,
-            [classes.whiteBg]: true
-          })}
-          sx={{ padding: '16px 32px 32px 32px'}}
-        >
-          <Typography variant='h5' mb={1}>Welcome, Agent Smith!</Typography>
-          <TextField id="email" label="Subscriber Email" variant="standard" autoComplete='new-password' value={email} error={emailValidation.error} helperText={emailValidation.helperText} onChange={handleEmailChange}/>
-          <TextField id="zip" type='number' label="Zip Code" variant="standard" autoComplete='new-password' value={zip} onChange={handleZipChange}/>
-          <TextField id="custom-message" label="Custom Message (Optional)" multiline maxRows={8} autoComplete='new-password' sx={{mt: 4, mb: 4}} value={message} onChange={handleMessageChange}/>
-          {sendButton}
-        </Card>
-      </Grid>
-    </Grid>
-    {(zip?.length === 5 && email) && <Grid className={classes.container} container spacing={2}>
-      <Grid item xs={12} md={12}>
-          <Card className={classNames({
-            [classes.flexColumn]: true,
-            [classes.spaceBetween]: true,
-            [classes.whiteBg]: true
-          })}
-          sx={{ padding: 8}}>
-            <Typography mb={4} variant='h5'>Contact Info</Typography>
-            <ToggleButtonGroup
-              color="primary"
-              value={customerType}
-              exclusive
-              onChange={handleCustomerTypeChange}
-            >
-              <ToggleButton value={CustomerTypeEnum.home}>Residential</ToggleButton>
-              <ToggleButton value={CustomerTypeEnum.business}>Business</ToggleButton>
-            </ToggleButtonGroup>
-            <Grid sx={{ marginBottom: 4, marginTop: 4 }}>
-              <TextField id="first-name" label="First Name" variant="standard" autoComplete='new-password' value={firstName} onChange={handleFirstNameChange} sx={{ width: '40%', marginRight: 8 }}/>
-              <TextField id="last-name" label="Last Name" variant="standard" autoComplete='new-password' value={lastName} onChange={handleLastNameChange} sx={{ width: '40%' }} />
-            </Grid>
-            <NumberFormat
-              id='phoneNumber'
-              name={'phoneNumber'}
-              customInput={TextField}
-              format="(###) ###-####"
-              mask="_"
-              onValueChange={phoneNumberValueChangeHandler}
-              label={'Phone'}
-              value={phoneNumber}
-              sx={{ width: '40%' }}
-              variant='standard'
+  const sendButton = (
+    <LoadingButton
+      size="small"
+      variant="contained"
+      loading={loading}
+      endIcon={<SendIcon />}
+      loadingPosition="end"
+      sx={{ width: 100 }}
+      disabled={submitDisabled}
+      onClick={handleSubmit}
+    >
+      Send
+    </LoadingButton>
+  );
+  return (
+    <div className={classes.flexColumn}>
+      <Grid className={classes.container} container spacing={2}>
+        <ListOfLinks />
+        <Grid item xs={12} md={8}>
+          <Card
+            className={classNames({
+              [classes.flexColumn]: true,
+              [classes.spaceBetween]: true,
+              [classes.whiteBg]: true,
+            })}
+            sx={{ padding: '16px 32px 32px 32px' }}
+          >
+            <Typography variant="h5" mb={1}>Welcome, Agent Smith!</Typography>
+            <TextField
+              id="email"
+              label="Subscriber Email"
+              variant="standard"
+              autoComplete="new-password"
+              value={email}
+              error={emailValidation.error}
+              helperText={emailValidation.helperText} 
+              onChange={handleEmailChange} 
             />
-            <Typography mt={4} mb={4} variant='h5'>Billing Address</Typography>
-
-            {!fullAddressFormVisible && <PlacesAutocomplete onSelect={handleAddressSelected}/>}
-            {!fullAddressFormVisible && <Link href='#' sx={{ cursor: 'pointer' }} onClick={handleManualEntryClick}>Manually Enter Address</Link>}
-
-            {fullAddressFormVisible && <TextField label={'Street Address'} value={streetAddress} onChange={handleStreetAddressChange} />}
-            {fullAddressFormVisible && <Grid>
-              <TextField margin='normal' label={'City'} value={city} sx={{ width: '40%', marginRight: 4 }}  onChange={handleCityChange} />
-              <TextField margin='normal' label={'State'} value={state} sx={{ width: '20%', marginRight: 4 }} onChange={handleStateChange} />
-              {/* <TextField margin='normal' label={'Zip'} value={zip} sx={{ width: '20%' }} onChange={handleZipChange} /> */}
-            </Grid>}
-
-            {fullAddressFormVisible && <Typography mt={4} mb={4} variant='h5'>Service Address</Typography>}
-
-            {fullAddressFormVisible && <TextField label={'Street Address'} value={serviceAddress} onChange={handleServiceAddressChange} />}
-            {fullAddressFormVisible && <Grid mb={1}>
-              <TextField margin='normal' label={'City'} value={serviceCity} sx={{ width: '40%', marginRight: 4 }} onChange={handleServiceCityChange} />
-              <TextField margin='normal' label={'State'} value={serviceState} sx={{ width: '20%', marginRight: 4 }} onChange={handleServiceStateChange} />
-              <TextField type='number' margin='normal' label={'Zip'} value={serviceZip} sx={{ width: '30%' }} onChange={handleServiceZipChange} />
-            </Grid>}
+            <TextField
+              id="zip"
+              type="number"
+              label="Zip Code"
+              variant="standard"
+              autoComplete="new-password"
+              value={zip}
+              onChange={handleZipChange} 
+            />
+            <TextField 
+              id="custom-message" 
+              label="Custom Message (Optional)" 
+              multiline 
+              maxRows={8} 
+              autoComplete="new-password" 
+              sx={{ mt: 4, mb: 4 }} 
+              value={message} 
+              onChange={handleMessageChange} 
+            />
             {sendButton}
           </Card>
+        </Grid>
       </Grid>
-    </Grid>}
-  </div>
-};
+      {(zip?.length === 5 && email) && (
+        <Grid className={classes.container} container spacing={2}>
+          <Grid item xs={12} md={12}>
+            <Card
+              className={classNames({
+                [classes.flexColumn]: true,
+                [classes.spaceBetween]: true,
+                [classes.whiteBg]: true,
+              })}
+              sx={{ padding: 8 }}
+            >
+              <Typography mb={4} variant="h5">Contact Info</Typography>
+              <ToggleButtonGroup
+                color="primary"
+                value={customerType}
+                exclusive
+                onChange={handleCustomerTypeChange}
+              >
+                <ToggleButton value={CustomerTypeEnum.home}>Residential</ToggleButton>
+                <ToggleButton value={CustomerTypeEnum.business}>Business</ToggleButton>
+              </ToggleButtonGroup>
+              <Grid sx={{ marginBottom: 4, marginTop: 4 }}>
+                <TextField 
+                  id="first-name" 
+                  label="First Name" 
+                  variant="standard" 
+                  autoComplete="new-password" 
+                  value={firstName} 
+                  onChange={handleFirstNameChange} 
+                  sx={{ width: '40%', marginRight: 8 }} 
+                />
+                <TextField 
+                  id="last-name" 
+                  label="Last Name" 
+                  variant="standard" 
+                  autoComplete="new-password" 
+                  value={lastName} 
+                  onChange={handleLastNameChange} 
+                  sx={{ width: '40%' }} 
+                />
+              </Grid>
+              <NumberFormat
+                id="phoneNumber"
+                name="phoneNumber"
+                customInput={TextField}
+                format="(###) ###-####"
+                mask="_"
+                onValueChange={phoneNumberValueChangeHandler}
+                label="Phone"
+                value={phoneNumber}
+                sx={{ width: '40%' }}
+                variant="standard"
+              />
+              <Typography mt={4} mb={4} variant="h5">Billing Address</Typography>
 
+              {!fullAddressFormVisible && <PlacesAutocomplete onSelect={handleAddressSelected} />}
+              {!fullAddressFormVisible && 
+                <Link href="#" sx={{ cursor: 'pointer' }} onClick={handleManualEntryClick}>
+                  Manually Enter Address
+                </Link>
+              }
+
+              {fullAddressFormVisible && 
+                <TextField label="Street Address" value={streetAddress} onChange={handleStreetAddressChange} />
+              }
+              {fullAddressFormVisible && (
+                <Grid>
+                  <TextField 
+                    margin="normal" 
+                    label="City" 
+                    value={city} 
+                    sx={{ width: '40%', marginRight: 4 }} 
+                    onChange={handleCityChange} 
+                  />
+                  <TextField 
+                    margin="normal" 
+                    label="State" 
+                    value={state} 
+                    sx={{ width: '20%', marginRight: 4 }} 
+                    onChange={handleStateChange} 
+                  />
+                  {/* <TextField 
+                    margin='normal' 
+                    label={'Zip'} 
+                    value={zip} 
+                    sx={{ width: '20%' }} 
+                    onChange={handleZipChange} 
+                  /> */}
+                </Grid>
+              )}
+
+              {fullAddressFormVisible && <Typography mt={4} mb={4} variant="h5">Service Address</Typography>}
+
+              {fullAddressFormVisible && 
+                <TextField label="Street Address" value={serviceAddress} onChange={handleServiceAddressChange} />}
+              {fullAddressFormVisible && (
+                <Grid mb={1}>
+                  <TextField 
+                    margin="normal" 
+                    label="City" 
+                    value={serviceCity} 
+                    sx={{ width: '40%', marginRight: 4 }} 
+                    onChange={handleServiceCityChange} 
+                  />
+                  <TextField 
+                    margin="normal" 
+                    label="State" 
+                    value={serviceState} 
+                    sx={{ width: '20%', marginRight: 4 }} 
+                    onChange={handleServiceStateChange} 
+                  />
+                  <TextField 
+                    type="number" 
+                    margin="normal" 
+                    label="Zip" 
+                    value={serviceZip} 
+                    sx={{ width: '30%' }} 
+                    onChange={handleServiceZipChange} 
+                  />
+                </Grid>
+              )}
+              {sendButton}
+            </Card>
+          </Grid>
+        </Grid>
+      )}
+    </div>
+  );
+}
