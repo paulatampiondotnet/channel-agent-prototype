@@ -1,15 +1,13 @@
 {
   "files": {
     "main.css": "/channel-agent-prototype/static/css/main.716d458b.css",
-    "main.js": "/channel-agent-prototype/static/js/main.e03a10ca.js",
-    "static/js/787.79b50eec.chunk.js": "/channel-agent-prototype/static/js/787.79b50eec.chunk.js",
+    "main.js": "/channel-agent-prototype/static/js/main.bee66128.js",
     "index.html": "/channel-agent-prototype/index.html",
     "main.716d458b.css.map": "/channel-agent-prototype/static/css/main.716d458b.css.map",
-    "main.e03a10ca.js.map": "/channel-agent-prototype/static/js/main.e03a10ca.js.map",
-    "787.79b50eec.chunk.js.map": "/channel-agent-prototype/static/js/787.79b50eec.chunk.js.map"
+    "main.bee66128.js.map": "/channel-agent-prototype/static/js/main.bee66128.js.map"
   },
   "entrypoints": [
     "static/css/main.716d458b.css",
-    "static/js/main.e03a10ca.js"
+    "static/js/main.bee66128.js"
   ]
 }
