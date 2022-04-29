@@ -16,6 +16,7 @@ import {
   EMAIL_REGEX, 
   ENROLLMENT_ERROR_MESSAGE, 
   INCOMPLETE_ENROLLMENT_CODE,
+  SPACING,
 } from '../../constants';
 import { InitializeEnrollment as initializeEnrollment } from '../../services/enrollment';
 import { parseAddress } from '../../utils/parseAddress';
@@ -56,7 +57,6 @@ export function ChannelAgentForm() {
 
   const [email, setEmail] = useState('');
   const [zip, setZip] = useState('');
-  const [message, setMessage] = useState('');
   const [customerType, setCustomerType] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -74,7 +74,6 @@ export function ChannelAgentForm() {
   const clearForm = useCallback(() => {
     setEmail('');
     // setZip('')
-    setMessage('');
     setCustomerType('');
     setFirstName('');
     setLastName('');
@@ -89,7 +88,6 @@ export function ChannelAgentForm() {
   }, [
     setEmail,
     setZip,
-    setMessage,
     setCustomerType,
     setFirstName,
     setLastName,
@@ -116,12 +114,8 @@ export function ChannelAgentForm() {
     }
   };
 
-  const handleZipChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setZip(event.target.value);
-  };
-
-  const handleMessageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setMessage(event.target.value);
+  const handleZipChange = (v: NumberFormatValues) => {
+    setZip(v.value);
   };
 
   const handleFirstNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -197,7 +191,6 @@ export function ChannelAgentForm() {
         agent_name: 'Agent Smith',
         email,
         billing_zip_code: zip,
-        message,
         create_new_on_conflict: true,
         customer_type: customerType,
         first_name: firstName,
@@ -260,7 +253,7 @@ export function ChannelAgentForm() {
     setLoading(false);
   };
 
-  const submitDisabled = Boolean(email.length <= 0 || zip.length !== 5);
+  const submitDisabled = Boolean(emailValidation.error || email.length === 0 || zip.length !== 5);
   const sendButton = (
     <LoadingButton
       size="small"
@@ -297,32 +290,25 @@ export function ChannelAgentForm() {
               value={email}
               error={emailValidation.error}
               helperText={emailValidation.helperText} 
-              onChange={handleEmailChange} 
+              onChange={handleEmailChange}
+              sx={{ mb: SPACING }}
             />
-            <TextField
+            <NumberFormat
               id="zip"
-              type="number"
+              name="zip"
+              customInput={TextField}
+              variant='standard'
+              format="#####"
+              onValueChange={handleZipChange}
               label="Zip Code"
-              variant="standard"
-              autoComplete="new-password"
               value={zip}
-              onChange={handleZipChange} 
-            />
-            <TextField 
-              id="custom-message" 
-              label="Custom Message (Optional)" 
-              multiline 
-              maxRows={8} 
-              autoComplete="new-password" 
-              sx={{ mt: 4, mb: 4 }} 
-              value={message} 
-              onChange={handleMessageChange} 
+              sx={{ mb: SPACING }}
             />
             {sendButton}
           </Card>
         </Grid>
       </Grid>
-      {(zip?.length === 5 && email) && (
+      {(zip?.length === 5 && email && !emailValidation.error) && (
         <Grid className={classes.container} container spacing={2}>
           <Grid item xs={12} md={12}>
             <Card
@@ -343,7 +329,7 @@ export function ChannelAgentForm() {
                 <ToggleButton value={CustomerTypeEnum.home}>Residential</ToggleButton>
                 <ToggleButton value={CustomerTypeEnum.business}>Business</ToggleButton>
               </ToggleButtonGroup>
-              <Grid sx={{ marginBottom: 4, marginTop: 4 }}>
+              <Grid sx={{ marginBottom: SPACING, marginTop: SPACING }}>
                 <TextField 
                   id="first-name" 
                   label="First Name" 
@@ -379,7 +365,9 @@ export function ChannelAgentForm() {
 
               {!fullAddressFormVisible && <PlacesAutocomplete onSelect={handleAddressSelected} />}
               {!fullAddressFormVisible && 
-                <Link href="#" sx={{ cursor: 'pointer' }} onClick={handleManualEntryClick}>
+                <Link href="#" sx={{ 
+                  cursor: 'pointer', mb: SPACING 
+                }} onClick={handleManualEntryClick}>
                   Manually Enter Address
                 </Link>
               }
@@ -393,14 +381,14 @@ export function ChannelAgentForm() {
                     margin="normal" 
                     label="City" 
                     value={city} 
-                    sx={{ width: '40%', marginRight: 4 }} 
+                    sx={{ width: '40%', marginRight: SPACING }} 
                     onChange={handleCityChange} 
                   />
                   <TextField 
                     margin="normal" 
                     label="State" 
                     value={state} 
-                    sx={{ width: '20%', marginRight: 4 }} 
+                    sx={{ width: '20%', marginRight: SPACING }} 
                     onChange={handleStateChange} 
                   />
                   {/* <TextField 
@@ -418,19 +406,19 @@ export function ChannelAgentForm() {
               {fullAddressFormVisible && 
                 <TextField label="Street Address" value={serviceAddress} onChange={handleServiceAddressChange} />}
               {fullAddressFormVisible && (
-                <Grid mb={1}>
+                <Grid mb={SPACING}>
                   <TextField 
                     margin="normal" 
                     label="City" 
                     value={serviceCity} 
-                    sx={{ width: '40%', marginRight: 4 }} 
+                    sx={{ width: '40%', marginRight: SPACING }} 
                     onChange={handleServiceCityChange} 
                   />
                   <TextField 
                     margin="normal" 
                     label="State" 
                     value={serviceState} 
-                    sx={{ width: '20%', marginRight: 4 }} 
+                    sx={{ width: '20%', marginRight: SPACING }} 
                     onChange={handleServiceStateChange} 
                   />
                   <TextField 
