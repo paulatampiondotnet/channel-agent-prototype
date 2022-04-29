@@ -52,7 +52,7 @@ export const useChannelAgentFormStyles = makeStyles(() => createStyles({
 export function ChannelAgentForm() {
   const classes = useChannelAgentFormStyles();
   const { enqueueSnackbar } = useSnackbar();
-  const vid = window.location.pathname.replace('/', '');
+  // const vid = window.location.pathname.replace('/', '');
 
   const [email, setEmail] = useState('');
   const [zip, setZip] = useState('');
@@ -212,7 +212,7 @@ export function ChannelAgentForm() {
         service_state: serviceState,
         service_zip_code: serviceZip,
         phone: phoneNumber,
-        vanity_id: vid,
+        // vanity_id: vid,
       });
       let messageToShow = `Invitation sent to ${email}!`;
       let variant: VariantType = 'success';
