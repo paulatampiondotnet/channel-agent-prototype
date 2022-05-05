@@ -1,27 +1,24 @@
 import {
-  Card, Grid, Link, Typography,
+  Card, Grid, Link,
 } from '@mui/material';
 import classNames from 'classnames';
+import { getTheme } from 'src/utils/theme';
 import { useChannelAgentFormStyles } from './ChannelAgentForm';
 
 export function ListOfLinks() {
   const classes = useChannelAgentFormStyles();
+  const theme = getTheme();
   return (
-    <Grid item xs={12} md={4}>
+    <Grid item xs={12} md={12}>
       <Card
         className={classNames({
-          [classes.flexColumn]: true,
           [classes.whiteBg]: true,
           [classes.height100]: true,
         })}
-        sx={{ padding: 8 }}
+        sx={{ padding: theme.spacing(1), display: 'flex', justifyContent: 'space-around', margin: '0 auto' }}
       >
-        <Typography>Start an enrollment</Typography>
+        <Link href='#'>Start an enrollment</Link>
         <Link href="#">Ampion Code of Conduct</Link>
-        <Link href="#">ASR Report</Link>
-        <Link href="#">Product News</Link>
-        <Link href="#">Upload Prospects</Link>
-        <Link href="#">View Prospects</Link>
       </Card>
     </Grid>
   );

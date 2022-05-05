@@ -3,7 +3,12 @@ import useOnclickOutside from 'react-cool-onclickoutside';
 import { List, ListItem, TextField } from '@mui/material';
 import { useChannelAgentFormStyles } from './ChannelAgentForm';
 
-export function PlacesAutocomplete({ onSelect }: { onSelect: (description: string) => void }) {
+type PlacesAutoCompleteProps = {
+  onSelect: (description: string) => void;
+  handleManualEntryClick: () => void;
+};
+
+export function PlacesAutocomplete({ onSelect, handleManualEntryClick }: PlacesAutoCompleteProps) {
   const classes = useChannelAgentFormStyles();
   const {
     ready,
@@ -40,9 +45,13 @@ export function PlacesAutocomplete({ onSelect }: { onSelect: (description: strin
     onSelect(description);
   };
 
+  const scrollToBottom = () => {
+    window.scrollTo(0, document.body.scrollHeight);
+  };
+
   const renderSuggestions = () => {
     console.log(data);
-    return data.map((suggestion) => {
+    const suggestions = data.map((suggestion) => {
       const {
         place_id,
         structured_formatting: { main_text, secondary_text },
@@ -59,6 +68,17 @@ export function PlacesAutocomplete({ onSelect }: { onSelect: (description: strin
         </ListItem>
       );
     });
+    suggestions.push(
+      <ListItem 
+        className={classes.autocompleteListItem} 
+        component="li" 
+        key={'enter-manually'} 
+        onClick={handleManualEntryClick}
+      >
+        Can't find the address? Enter it manually.
+      </ListItem>
+    );
+    return suggestions;
   };
 
   return (
@@ -73,6 +93,8 @@ export function PlacesAutocomplete({ onSelect }: { onSelect: (description: strin
         inputProps={{
           autoComplete: 'new-password',
         }}
+        onFocus={scrollToBottom}
+        sx={{ width: 782, height: 48 }}
       />
       {/* We can use the "status" to decide whether we should display the dropdown or not */}
       {status === 'OK' && <List>{renderSuggestions()}</List>}

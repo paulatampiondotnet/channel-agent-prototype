@@ -25,6 +25,8 @@
             "error",
             2
         ],
+        "no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": ["error"],
         "linebreak-style": [
             "error",
             "unix"
@@ -38,6 +40,7 @@
             "always"
         ],
         "react/react-in-jsx-scope": 0,
+        "react/no-unescaped-entities": 0,
         "max-len": ["error", { 
             "code": 120, 
             "ignoreRegExpLiterals": true

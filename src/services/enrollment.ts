@@ -1,6 +1,6 @@
 import { API_AMPION_URL, BAD_RESPONSE_MESSAGE, ENROLLMENT_ENDPOINT } from '../constants';
 
-export const InitializeEnrollment = (enrollment: any) => {
+export const initializeEnrollment = (enrollment: any) => {
   const url = `${API_AMPION_URL}/${ENROLLMENT_ENDPOINT}`;
   return fetch(url, {
     method: 'POST',
