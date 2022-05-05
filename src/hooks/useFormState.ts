@@ -27,6 +27,8 @@ export function useChannelAgentForm() {
   const [serviceCity, setServiceCity] = useState('');
   const [serviceState, setServiceState] = useState('');
   const [serviceZip, setServiceZip] = useState('');
+  const [organizationName, setOrganizationName] = useState(null);
+  const [jobTitle, setJobTitle] = useState(null);
   
   const [loading, setLoading] = useState(false);
 
@@ -112,6 +114,14 @@ export function useChannelAgentForm() {
     setServiceZip(event.target.value);
   };
 
+  const handleOrganizationNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setOrganizationName(event.target.value);
+  };
+
+  const handleJobTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setJobTitle(event.target.value);
+  };
+
   const handleCustomerTypeChange = (
     _: React.MouseEvent<HTMLElement>,
     newValue: string,
@@ -147,6 +157,8 @@ export function useChannelAgentForm() {
         service_state: serviceState,
         service_zip_code: serviceZip,
         phone: phoneNumber,
+        company_name: organizationName,
+        title: jobTitle,
         // vanity_id: vid,
       });
       let messageToShow = `Invitation sent to ${email}!`;
@@ -209,6 +221,8 @@ export function useChannelAgentForm() {
     serviceCity, setServiceCity,
     serviceState, setServiceState,
     serviceZip, setServiceZip,
+    organizationName,
+    jobTitle,
     loading, setLoading,
     emailValidation, setEmailValidation,
     handleEmailChange,
@@ -222,6 +236,8 @@ export function useChannelAgentForm() {
     handleServiceCityChange,
     handleServiceStateChange,
     handleServiceZipChange,
+    handleOrganizationNameChange,
+    handleJobTitleChange,
     handleCustomerTypeChange,
     handlePhoneNumberChange,
     phoneNumberValueChangeHandler,

@@ -34,6 +34,7 @@ export function PlacesAutocomplete({ onSelect, handleManualEntryClick }: PlacesA
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     // Update the keyword of the input element
     setValue(e.target.value);
+    scrollToBottom();
   };
 
   const handleSelect = ({ description }: { description: string }) => () => {
@@ -93,7 +94,6 @@ export function PlacesAutocomplete({ onSelect, handleManualEntryClick }: PlacesA
         inputProps={{
           autoComplete: 'new-password',
         }}
-        onFocus={scrollToBottom}
         sx={{ width: 782, height: 48 }}
       />
       {/* We can use the "status" to decide whether we should display the dropdown or not */}

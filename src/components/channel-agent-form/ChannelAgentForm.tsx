@@ -1,10 +1,10 @@
 import {
-  Card, Grid, TextField, ToggleButton, ToggleButtonGroup, Typography,
+  Card, Checkbox, Grid, TextField, ToggleButton, ToggleButtonGroup, Typography,
 } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { createStyles, makeStyles } from '@mui/styles';
 import classNames from 'classnames';
-import { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import NumberFormat from 'react-number-format';
 import {
   CustomerTypeEnum, 
@@ -96,24 +96,41 @@ export function ChannelAgentForm() {
   }, [setFullAddressFormVisible]);
 
   const handleAddressSelected = (longAddress: string) => {
-    const { streetAddress, city, state } = parseAddress(longAddress);
-    setStreetAddress(streetAddress);
-    setCity(city);
-    setState(state);
+    const address = parseAddress(longAddress);
+    setStreetAddress(address.streetAddress);
+    setCity(address.city);
+    setState(address.state);
+    setServiceAddressToNewAddress(address.streetAddress, address.city, address.state);
+    setFullAddressFormVisible(true);
+  };
+
+  const [serviceAddressSameAsMailing, setServiceAddressSameAsMailing] = useState(true);
+
+  function setServiceAddressToNewAddress(streetAddress: string, city: string, state: string) {
     setServiceAddress(streetAddress);
     setServiceCity(city);
     setServiceState(state);
     setServiceZip(zip);
-    setFullAddressFormVisible(true);
-  };
+  }
 
-  const submitDisabled = Boolean(emailValidation.error || email.length === 0 || zip.length !== 5);
+  const handleServiceAddressSameAsMailingChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.checked;
+    setServiceAddressSameAsMailing(value);
+    if (value === true) {
+      setServiceAddressToNewAddress(streetAddress, city, state);
+    } else {
+      setServiceAddressToNewAddress('', '', '');
+    }
+  }, [setServiceAddressSameAsMailing, setServiceAddressToNewAddress]);
+
+  const submitDisabled = useMemo(() =>
+    Boolean(emailValidation.error || email.length === 0 || zip.length !== 5), [emailValidation, email, zip]
+  );
   const sendButton = (
     <LoadingButton
       size="small"
       variant="contained"
       loading={loading}
-      loadingPosition="end"
       sx={{ width: 191, height: 45, backgroundColor: '#0088FD', borderRadius: '5px' }}
       disabled={submitDisabled}
       onClick={handleSubmit}
@@ -121,6 +138,11 @@ export function ChannelAgentForm() {
       Send Invitation
     </LoadingButton>
   );
+
+  const showServiceAddressForm = useMemo(() => 
+    (fullAddressFormVisible && !serviceAddressSameAsMailing), [fullAddressFormVisible, serviceAddressSameAsMailing]
+  );
+
   return (
     <Grid className={classes.container} container spacing={2}>
       <ListOfLinks />
@@ -176,14 +198,6 @@ export function ChannelAgentForm() {
                   <ToggleButton value={CustomerTypeEnum.home}>Residential</ToggleButton>
                   <ToggleButton value={CustomerTypeEnum.business}>Business</ToggleButton>
                 </ToggleButtonGroup>
-                {customerType === CustomerTypeEnum.business && <Grid sx={{ marginTop: theme.spacing(1) }}>
-                  <TextField
-                    className={classes.width251}
-                    id='org-name'
-                    label='Organization Name'
-                    variant='standard'
-                    autoComplete='new-password'
-                  /></Grid>}
                 <Grid sx={{ marginBottom: theme.spacing(1), marginTop: theme.spacing(1) }}>
                   <TextField 
                     className={classes.width251}
@@ -218,14 +232,36 @@ export function ChannelAgentForm() {
                     variant="standard"
                   />
                 </Grid>
+                {customerType === CustomerTypeEnum.business && 
+                  <Grid sx={{ marginTop: theme.spacing(1) }}>
+                    <TextField
+                      className={classes.width251}
+                      id='job-description'
+                      label='Job Description'
+                      variant='standard'
+                      autoComplete='new-password'
+                      sx={{ marginRight: theme.spacing(1) }}
+                    />
+                    <TextField
+                      className={classes.width251}
+                      id='org-name'
+                      label='Organization Name'
+                      variant='standard'
+                      autoComplete='new-password'
+                    />
+                  </Grid>}
                 <Typography mt={4} mb={4} variant="h5">Mailing Address</Typography>
-
                 {!fullAddressFormVisible && <PlacesAutocomplete 
                   onSelect={handleAddressSelected} 
                   handleManualEntryClick={handleManualEntryClick} 
                 />}
                 {fullAddressFormVisible && 
-                    <TextField label="Street Address" value={streetAddress} onChange={handleStreetAddressChange} />
+                  <TextField 
+                    label="Street Address" 
+                    value={streetAddress} 
+                    onChange={handleStreetAddressChange} 
+                    sx={{ width: 782, height: 48 }}
+                  />
                 }
                 {fullAddressFormVisible && (
                   <Grid>
@@ -252,12 +288,25 @@ export function ChannelAgentForm() {
                       /> */}
                   </Grid>
                 )}
+                <Grid display='flex' flexDirection='row' alignItems='center'>
+                  <Checkbox
+                    checked={serviceAddressSameAsMailing}
+                    onChange={handleServiceAddressSameAsMailingChange}
+                    sx={{ paddingLeft: 0 }}
+                  />
+                  <Typography>Same as utility service address</Typography>
+                </Grid>
 
-                {fullAddressFormVisible && <Typography mt={4} mb={4} variant="h5">Service Address</Typography>}
+                {showServiceAddressForm && <Typography mt={4} mb={4} variant="h5">Service Address</Typography>}
 
-                {fullAddressFormVisible && 
-                    <TextField label="Street Address" value={serviceAddress} onChange={handleServiceAddressChange} />}
-                {fullAddressFormVisible && (
+                {showServiceAddressForm && 
+                    <TextField 
+                      label="Street Address" 
+                      value={serviceAddress} 
+                      onChange={handleServiceAddressChange} 
+                      sx={{ width: 782, height: 48 }} 
+                    />}
+                {showServiceAddressForm && (
                   <Grid mb={theme.spacing(1)}>
                     <TextField 
                       margin="normal" 
