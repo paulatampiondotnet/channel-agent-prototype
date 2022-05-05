@@ -110,8 +110,8 @@ export function useChannelAgentForm() {
     setServiceState(event.target.value);
   };
 
-  const handleServiceZipChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setServiceZip(event.target.value);
+  const handleServiceZipChange = (v: NumberFormatValues) => {
+    setServiceZip(v.value);
   };
 
   const handleOrganizationNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {

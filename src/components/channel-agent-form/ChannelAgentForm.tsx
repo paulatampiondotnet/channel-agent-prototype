@@ -39,9 +39,13 @@ export const useChannelAgentFormStyles = makeStyles(() => createStyles({
   },
   autocompleteListItem: {
     cursor: 'pointer',
+    height: 25,
+    fontSize: '16px',
+    fontWeight: 400,
+    fontFamily: 'Jost',
+    lineHeight: '22.4px',
     '&:hover': {
-      backgroundColor: 'black',
-      color: 'whitesmoke',
+      backgroundColor: '#E5E5E5',
     },
   },
   width251: {
@@ -194,6 +198,7 @@ export function ChannelAgentForm() {
                   value={customerType}
                   exclusive
                   onChange={handleCustomerTypeChange}
+                  sx={{ marginBottom: theme.spacing(3) }}
                 >
                   <ToggleButton value={CustomerTypeEnum.home}>Residential</ToggleButton>
                   <ToggleButton value={CustomerTypeEnum.business}>Business</ToggleButton>
@@ -250,7 +255,9 @@ export function ChannelAgentForm() {
                       autoComplete='new-password'
                     />
                   </Grid>}
-                <Typography mt={4} mb={4} variant="h5">Mailing Address</Typography>
+                <Typography mt={4} mb={4} variant="h5">
+                  Mailing Address <span className={classes.lightText}>(Optional)</span>
+                </Typography>
                 {!fullAddressFormVisible && <PlacesAutocomplete 
                   onSelect={handleAddressSelected} 
                   handleManualEntryClick={handleManualEntryClick} 
@@ -259,7 +266,8 @@ export function ChannelAgentForm() {
                   <TextField 
                     label="Street Address" 
                     value={streetAddress} 
-                    onChange={handleStreetAddressChange} 
+                    onChange={handleStreetAddressChange}
+                    variant="standard"
                     sx={{ width: 782, height: 48 }}
                   />
                 }
@@ -268,24 +276,30 @@ export function ChannelAgentForm() {
                     <TextField 
                       margin="normal" 
                       label="City" 
-                      value={city} 
-                      sx={{ width: '40%', marginRight: theme.spacing(1) }} 
+                      value={city}
+                      variant="standard"
+                      sx={{ width: 180, marginRight: theme.spacing(1) }} 
                       onChange={handleCityChange} 
                     />
                     <TextField 
                       margin="normal" 
                       label="State" 
-                      value={state} 
-                      sx={{ width: '20%', marginRight: theme.spacing(1) }} 
+                      value={state}
+                      variant="standard"
+                      sx={{ width: 180, marginRight: theme.spacing(1) }} 
                       onChange={handleStateChange} 
                     />
-                    {/* <TextField 
-                        margin='normal' 
-                        label={'Zip'} 
-                        value={zip} 
-                        sx={{ width: '20%' }} 
-                        onChange={handleZipChange} 
-                      /> */}
+                    <NumberFormat
+                      id="zip-2"
+                      name="zip-2"
+                      customInput={TextField}
+                      variant='standard'
+                      format="#####"
+                      onValueChange={handleZipChange}
+                      label="Zip Code"
+                      value={zip}
+                      sx={{ width: 133, marginTop: theme.spacing(2) }}
+                    />
                   </Grid>
                 )}
                 <Grid display='flex' flexDirection='row' alignItems='center'>
@@ -297,12 +311,17 @@ export function ChannelAgentForm() {
                   <Typography>Same as utility service address</Typography>
                 </Grid>
 
-                {showServiceAddressForm && <Typography mt={4} mb={4} variant="h5">Service Address</Typography>}
+                {showServiceAddressForm && 
+                  <Typography mt={4} mb={4} variant="h5">
+                    Service Address <span className={classes.lightText}>(Optional)</span>
+                  </Typography>
+                }
 
                 {showServiceAddressForm && 
                     <TextField 
                       label="Street Address" 
-                      value={serviceAddress} 
+                      value={serviceAddress}
+                      variant="standard"
                       onChange={handleServiceAddressChange} 
                       sx={{ width: 782, height: 48 }} 
                     />}
@@ -311,24 +330,29 @@ export function ChannelAgentForm() {
                     <TextField 
                       margin="normal" 
                       label="City" 
-                      value={serviceCity} 
-                      sx={{ width: '40%', marginRight: theme.spacing(1) }} 
+                      value={serviceCity}
+                      variant="standard"
+                      sx={{ width: 180, marginRight: theme.spacing(1) }} 
                       onChange={handleServiceCityChange} 
                     />
                     <TextField 
                       margin="normal" 
                       label="State" 
-                      value={serviceState} 
-                      sx={{ width: '20%', marginRight: theme.spacing(1) }} 
+                      value={serviceState}
+                      variant="standard"
+                      sx={{ width: 180, marginRight: theme.spacing(1) }} 
                       onChange={handleServiceStateChange} 
                     />
-                    <TextField 
-                      type="number" 
-                      margin="normal" 
-                      label="Zip" 
-                      value={serviceZip} 
-                      sx={{ width: '30%' }} 
-                      onChange={handleServiceZipChange} 
+                    <NumberFormat
+                      id="service-zip"
+                      name="service-zip"
+                      customInput={TextField}
+                      variant='standard'
+                      format="#####"
+                      onValueChange={handleServiceZipChange}
+                      label="Zip Code"
+                      value={serviceZip}
+                      sx={{ width: 133, marginTop: theme.spacing(2) }}
                     />
                   </Grid>
                 )}

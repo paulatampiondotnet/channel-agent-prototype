@@ -15,7 +15,7 @@ export function ListOfLinks() {
           [classes.whiteBg]: true,
           [classes.height100]: true,
         })}
-        sx={{ padding: theme.spacing(1), display: 'flex', justifyContent: 'space-around', margin: '0 auto' }}
+        sx={{ padding: theme.spacing(4), display: 'flex', justifyContent: 'space-around', margin: '0 auto' }}
       >
         <Link href='#'>Start an enrollment</Link>
         <Link href="#">Ampion Code of Conduct</Link>

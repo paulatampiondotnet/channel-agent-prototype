@@ -1,7 +1,8 @@
 import usePlacesAutocomplete from 'use-places-autocomplete';
 import useOnclickOutside from 'react-cool-onclickoutside';
-import { List, ListItem, TextField } from '@mui/material';
+import { Link, List, ListItem, TextField } from '@mui/material';
 import { useChannelAgentFormStyles } from './ChannelAgentForm';
+import React from 'react';
 
 type PlacesAutoCompleteProps = {
   onSelect: (description: string) => void;
@@ -73,9 +74,17 @@ export function PlacesAutocomplete({ onSelect, handleManualEntryClick }: PlacesA
         className={classes.autocompleteListItem} 
         component="li" 
         key={'enter-manually'} 
-        onClick={handleManualEntryClick}
+        sx={{ 
+          justifyContent: 'center',
+          cursor: 'default',
+          boxShadow: '0px -1px 1px rgba(0, 0, 0, 0.03)',
+          ':hover': {
+            backgroundColor: 'inherit'
+          }
+        }}
       >
-        Can't find the address? Enter it manually.
+        Can't find the address?&nbsp;
+        <Link onClick={handleManualEntryClick}>Enter it manually</Link>
       </ListItem>
     );
     return suggestions;
@@ -96,7 +105,10 @@ export function PlacesAutocomplete({ onSelect, handleManualEntryClick }: PlacesA
         sx={{ width: 782, height: 48 }}
       />
       {/* We can use the "status" to decide whether we should display the dropdown or not */}
-      {status === 'OK' && <List>{renderSuggestions()}</List>}
+      {status === 'OK' && 
+        <List>
+          {renderSuggestions()}
+        </List>}
     </div>
   );
 }
