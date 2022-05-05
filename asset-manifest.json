@@ -1,13 +1,31 @@
 {
   "files": {
-    "main.css": "/channel-agent-prototype/static/css/main.716d458b.css",
-    "main.js": "/channel-agent-prototype/static/js/main.b7ec2e85.js",
+    "main.css": "/channel-agent-prototype/static/css/main.9f9a6034.css",
+    "main.js": "/channel-agent-prototype/static/js/main.42e2a427.js",
+    "static/media/Jost-MediumItalic.ttf": "/channel-agent-prototype/static/media/Jost-MediumItalic.46e1101683379a665213.ttf",
+    "static/media/Jost-SemiBoldItalic.ttf": "/channel-agent-prototype/static/media/Jost-SemiBoldItalic.6eb4a1504c860a098a9e.ttf",
+    "static/media/Jost-ExtraLightItalic.ttf": "/channel-agent-prototype/static/media/Jost-ExtraLightItalic.a3384473f9c7d943a7d2.ttf",
+    "static/media/Jost-LightItalic.ttf": "/channel-agent-prototype/static/media/Jost-LightItalic.c1f13979317d0efff685.ttf",
+    "static/media/Jost-RegularItalic.ttf": "/channel-agent-prototype/static/media/Jost-RegularItalic.a1667c647340306885e0.ttf",
+    "static/media/Jost-ExtraBoldItalic.ttf": "/channel-agent-prototype/static/media/Jost-ExtraBoldItalic.370575605867157b1c0c.ttf",
+    "static/media/Jost-BoldItalic.ttf": "/channel-agent-prototype/static/media/Jost-BoldItalic.dc970c98109639b2ae13.ttf",
+    "static/media/Jost-BlackItalic.ttf": "/channel-agent-prototype/static/media/Jost-BlackItalic.eb09fe8ea2fc03a87587.ttf",
+    "static/media/Jost-ThinItalic.ttf": "/channel-agent-prototype/static/media/Jost-ThinItalic.7a9543789654a0f52e37.ttf",
+    "static/media/Jost-ExtraBold.ttf": "/channel-agent-prototype/static/media/Jost-ExtraBold.d4eb9feeea94ba2cb8d2.ttf",
+    "static/media/Jost-ExtraLight.ttf": "/channel-agent-prototype/static/media/Jost-ExtraLight.343dac2821d7d288258d.ttf",
+    "static/media/Jost-Black.ttf": "/channel-agent-prototype/static/media/Jost-Black.4a135fe609051b625e57.ttf",
+    "static/media/Jost-Medium.ttf": "/channel-agent-prototype/static/media/Jost-Medium.4f6adcce2a79bd449919.ttf",
+    "static/media/Jost-SemiBold.ttf": "/channel-agent-prototype/static/media/Jost-SemiBold.ec58ba956fab6842dcc3.ttf",
+    "static/media/Jost-Light.ttf": "/channel-agent-prototype/static/media/Jost-Light.5b4331b934431ab95b18.ttf",
+    "static/media/Jost-Bold.ttf": "/channel-agent-prototype/static/media/Jost-Bold.ac6981857adf1ea5251e.ttf",
+    "static/media/Jost-Thin.ttf": "/channel-agent-prototype/static/media/Jost-Thin.57123e61aaf0094e8472.ttf",
+    "static/media/Jost-Regular.ttf": "/channel-agent-prototype/static/media/Jost-Regular.ba7997a1296d58137156.ttf",
     "index.html": "/channel-agent-prototype/index.html",
-    "main.716d458b.css.map": "/channel-agent-prototype/static/css/main.716d458b.css.map",
-    "main.b7ec2e85.js.map": "/channel-agent-prototype/static/js/main.b7ec2e85.js.map"
+    "main.9f9a6034.css.map": "/channel-agent-prototype/static/css/main.9f9a6034.css.map",
+    "main.42e2a427.js.map": "/channel-agent-prototype/static/js/main.42e2a427.js.map"
   },
   "entrypoints": [
-    "static/css/main.716d458b.css",
-    "static/js/main.b7ec2e85.js"
+    "static/css/main.9f9a6034.css",
+    "static/js/main.42e2a427.js"
   ]
 }
