@@ -1,5 +1,5 @@
 import {
-  Card, Checkbox, Grid, TextField, ToggleButton, ToggleButtonGroup, Typography,
+  Card, Checkbox, Grid, Link, TextField, ToggleButton, ToggleButtonGroup, Typography,
 } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { createStyles, makeStyles } from '@mui/styles';
@@ -126,6 +126,13 @@ export function ChannelAgentForm() {
       setServiceAddressToNewAddress('', '', '');
     }
   }, [setServiceAddressSameAsMailing, setServiceAddressToNewAddress]);
+
+  const handleAddressResetClick = useCallback(() => {
+    setStreetAddress('');
+    setFullAddressFormVisible(false);
+    setCity('');
+    setState('');
+  }, [setStreetAddress, setFullAddressFormVisible, setCity, setState]);
 
   const submitDisabled = useMemo(() =>
     Boolean(emailValidation.error || email.length === 0 || zip.length !== 5), [emailValidation, email, zip]
@@ -254,9 +261,11 @@ export function ChannelAgentForm() {
                       variant='standard'
                       autoComplete='new-password'
                     />
-                  </Grid>}
+                  </Grid>
+                }
                 <Typography mt={4} mb={4} variant="h5">
-                  Mailing Address <span className={classes.lightText}>(Optional)</span>
+                  Mailing Address <span className={classes.lightText}>(Optional)&nbsp;</span>
+                  <Link className={classes.lightText} onClick={handleAddressResetClick}>Reset</Link>
                 </Typography>
                 {!fullAddressFormVisible && <PlacesAutocomplete 
                   onSelect={handleAddressSelected} 
@@ -302,7 +311,7 @@ export function ChannelAgentForm() {
                     />
                   </Grid>
                 )}
-                <Grid display='flex' flexDirection='row' alignItems='center'>
+                <Grid display='flex' flexDirection='row' alignItems='center' mb={theme.spacing(2)}>
                   <Checkbox
                     checked={serviceAddressSameAsMailing}
                     onChange={handleServiceAddressSameAsMailingChange}
@@ -312,21 +321,22 @@ export function ChannelAgentForm() {
                 </Grid>
 
                 {showServiceAddressForm && 
-                  <Typography mt={4} mb={4} variant="h5">
+                  <Typography mb={2} variant="h5">
                     Service Address <span className={classes.lightText}>(Optional)</span>
                   </Typography>
                 }
 
                 {showServiceAddressForm && 
-                    <TextField 
-                      label="Street Address" 
-                      value={serviceAddress}
-                      variant="standard"
-                      onChange={handleServiceAddressChange} 
-                      sx={{ width: 782, height: 48 }} 
-                    />}
+                  <TextField 
+                    label="Street Address" 
+                    value={serviceAddress}
+                    variant="standard"
+                    onChange={handleServiceAddressChange} 
+                    sx={{ width: 782, height: 48 }} 
+                  />
+                }
                 {showServiceAddressForm && (
-                  <Grid mb={theme.spacing(1)}>
+                  <Grid mb={theme.spacing(2)}>
                     <TextField 
                       margin="normal" 
                       label="City" 
