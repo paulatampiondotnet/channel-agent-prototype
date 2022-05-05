@@ -51,7 +51,6 @@ export function PlacesAutocomplete({ onSelect, handleManualEntryClick }: PlacesA
   };
 
   const renderSuggestions = () => {
-    console.log(data);
     const suggestions = data.map((suggestion) => {
       const {
         place_id,
